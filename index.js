@@ -14,7 +14,7 @@ var request   = require('request'),
     _         = require('underscore'),
     Promise   = require('bluebird'),
     version   = require('./package.json').version,
-    jxon      = require('jxon');
+    xml2js    = require('xml2js');
 
 module.exports = QuickBooks
 
@@ -2341,7 +2341,7 @@ module.xmlRequest = function(context, url, rootTag, callback) {
     var json =
         body.constructor === {}.constructor ? body :
             (body.constructor === "".constructor ?
-                (body.indexOf('<') === 0 ? jxon.stringToJs(body)[rootTag] : body) : body);
+                (body.indexOf('<') === 0 ? xml2js.xml2js(body)[rootTag] : body) : body);
     callback(json.ErrorCode === 0 ? null : json, json);
   })
 }
