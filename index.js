@@ -2338,11 +2338,14 @@ module.request = function(context, verb, options, entity, callback) {
 
 module.xmlRequest = function(context, url, rootTag, callback) {
   module.request(context, 'get', {url:url}, null, (err, body) => {
-    var json =
-        body.constructor === {}.constructor ? body :
-            (body.constructor === "".constructor ?
-                (body.indexOf('<') === 0 ? xml2js.xml2js(body)[rootTag] : body) : body);
-    callback(json.ErrorCode === 0 ? null : json, json);
+    if (body.constructor === "".constructor && body.indexOf('<') === 0) {
+      parseString(body, {trim: true}, function (err, json) {
+        callback(json.ErrorCode === 0 ? null : json, json[rootTag]);
+      });
+    }
+    else {
+      callback(body.ErrorCode === 0 ? null : body, body);
+    }
   })
 }
 
